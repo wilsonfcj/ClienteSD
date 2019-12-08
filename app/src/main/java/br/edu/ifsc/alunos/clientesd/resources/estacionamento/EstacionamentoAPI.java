@@ -12,8 +12,8 @@ import retrofit2.http.Query;
 
 public interface EstacionamentoAPI {
 
-    @GET("/parking/slots")
-    Call<ArrayList<Vaga>> consultarVagas();
+    @GET("/parking/allSlots")
+    Call<List<Vaga>> consultarVagas();
 
     @GET("/parking/occupy")
     Call<Integer> vagasOcupadas();

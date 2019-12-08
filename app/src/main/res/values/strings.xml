@@ -1,4 +1,21 @@
 <resources>
     <string name="app_name">Smart Campus</string>
     <string name="copyright">©Groselha Sys. 2019. Todos os direitos reservados</string>
+
+    <string name="todos">Todos</string>
+    <string name="cadastro_em_andamento">Cadastro em andamento</string>
+    <string name="submetido">Submetido</string>
+    <string name="cadastro">Cadastrado</string>
+    <string name="distribuido_para_avaliacao_auto">Distribuído para avaliação (Aut.)</string>
+    <string name="avaliacao_insuficiente">Avaliação insuficiente</string>
+    <string name="distribuido_avaliacao_manualmente">Distribuído para avaliação (Manual.)</string>
+    <string name="aprovado">Aprovado</string>
+    <string name="em_execucao">Em execução</string>
+    <string name="finalizado_renovado">Finalizado (Renovado)</string>
+    <string name="finalizado">Finalizado</string>
+    <string name="reprovado">Reprovado</string>
+    <string name="desativado">Desativado</string>
+    <string name="exluido">Excluído</string>
+    <string name="finalizado_pendencias">Finalizado com Pendências</string>
+
 </resources>

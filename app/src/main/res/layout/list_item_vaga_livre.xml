@@ -34,7 +34,7 @@
                     android:layout_centerInParent="true"
                     android:scaleType="centerCrop"
                     android:tint="@color/colorAccent"
-                    app:srcCompat="@drawable/ic_busy_slot" />
+                    app:srcCompat="@drawable/ic_free_slot" />
 
                     <!--      GAMBIARRA NA MARGIM TOP, tem uma forma melhor de implementar isso-->
                     <TextView
@@ -42,10 +42,9 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:textStyle="bold"
-                        android:layout_marginTop="36dp"
                         android:gravity="center"
-                        android:textColor="@color/md_white_1000"
-                        android:textSize="12dp"
+                        android:layout_centerInParent="true"
+                        android:textSize="13dp"
                         android:text="120" />
 
                 </RelativeLayout>
@@ -54,7 +53,7 @@
                     android:id="@+id/container_status"
                     android:layout_width="match_parent"
                     android:layout_height="25dp"
-                    android:background="@color/md_red_400"
+                    android:background="@color/md_green_500"
                     android:orientation="horizontal">
 
                     <TextView
@@ -63,7 +62,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:gravity="center"
-                        android:text="Ocupada"
+                        android:text="Livre"
                         android:textColor="@color/md_white_1000"
                         android:textStyle="bold" />
 

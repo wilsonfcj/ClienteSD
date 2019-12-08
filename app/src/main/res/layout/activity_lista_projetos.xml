@@ -38,22 +38,36 @@
                     app:hintAnimationEnabled="true"
                     android:layout_weight="1">
 
-                    <com.google.android.material.textfield.TextInputEditText
+                    <AutoCompleteTextView
                         android:id="@+id/edt_txt_data_inicio"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:backgroundTint="@android:color/white"
                         android:drawableTint="@android:color/white"
-                        android:hint="Ano"
-                        android:text="Todos"
-                        android:imeActionId="6"
-                        android:imeActionLabel="Data Inicial"
-                        android:inputType="text"
-                        android:clickable="false"
-                        android:focusable="false"
-                        android:focusableInTouchMode="true"
+                        android:backgroundTint="@android:color/white"
                         android:textColor="@android:color/white"
-                        android:textColorHint="@android:color/white" />
+                        android:textColorHint="@android:color/white"
+                        android:layout_height="wrap_content"
+                        android:hint="Data Inicial"
+                        android:focusable="false"
+                        android:clickable="false"/>
+
+
+
+<!--                    <com.google.android.material.textfield.TextInputEditText-->
+<!--                        android:id="@+id/edt_txt_data_inicio"-->
+<!--                        android:layout_width="match_parent"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:backgroundTint="@android:color/white"-->
+<!--                        android:drawableTint="@android:color/white"-->
+<!--                        android:hint="Ano"-->
+<!--                        android:text="Todos"-->
+<!--                        android:imeActionId="6"-->
+<!--                        android:imeActionLabel="Data Inicial"-->
+<!--                        android:inputType="text"-->
+<!--                        android:clickable="false"-->
+<!--                        android:focusable="false"-->
+<!--                        android:focusableInTouchMode="true"-->
+<!--                        android:textColor="@android:color/white"-->
+<!--                        android:textColorHint="@android:color/white" />-->
 
                 </com.google.android.material.textfield.TextInputLayout>
 

@@ -82,6 +82,11 @@ public class AdapterProjetos extends RecyclerView.Adapter<AdapterProjetos.ViewHo
         notifyDataSetChanged();
     }
 
+    public void clearItens() {
+        mListProjetos.clear();
+        notifyDataSetChanged();
+    }
+
     public static class ViewHolderProjetos extends RecyclerView.ViewHolder {
         // each data item is just a string in this case
         public TextView tvCoordenador;

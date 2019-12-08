@@ -24,14 +24,13 @@
                 layout="@layout/widget_logo_toolbar" />
 
         </LinearLayout>
-
-
     </LinearLayout>
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/swipe_refresh_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_margin="4dp"
         android:layout_below="@+id/container_toolbar"
         android:layout_above="@+id/container_copyright">
 
@@ -51,7 +50,7 @@
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:gravity="center"
-        android:visibility="gone"
+        android:visibility="invisible"
         android:orientation="vertical">
 
         <ImageView
@@ -59,12 +58,12 @@
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
             android:tint="@color/divider_color"
-            android:src="@drawable/ic_dashboar_projeto_pesquisa" />
+            android:src="@drawable/ic_dashboard_vagas_indisponiveis" />
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Nenhuma projeto de pesquisa encontrado"
+            android:text="Nenhuma vaga encontrada"
             android:gravity="center"
             android:textColor="@color/divider_color"
             />

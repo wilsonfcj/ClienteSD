@@ -5,12 +5,12 @@ import br.edu.ifsc.alunos.clientesd.R;
 public enum Situacao {
 	
 	DEFAULT(-1, "Situação não cadastrada", R.color.divider_color),
-	CADSTRO_EM_ANDAMENTO(0,"Cadastro em andamento", R.color.md_blue_grey_50),
+	CADSTRO_EM_ANDAMENTO(0,"Cadastro em andamento", R.color.md_blue_grey_100),
 	SUBMETIDO(1,"Submetido", R.color.md_amber_A200),
 	CADASTRADO(2,"Cadastrado", R.color.md_teal_A400),
 	DISTRIBUIDO_PARA_AVALIACAO_AUTOMATICAMENTE(3,"Distribuído para avaliação (Automaticamente)", R.color.md_cyan_A200),
 	AVALIAÇAO_INSUFICIENTE(4,"Avaliação insuficiente", R.color.md_cyan_700),
-	DISTRIBUIDO_PARA_AVALIACAO_MANUALEMTE(5,"Distribuído para avaliação (Manualmente)", R.color.md_amber_A700),
+	DISTRIBUIDO_PARA_AVALIACAO_MANUALMENTE(5,"Distribuído para avaliação (Manualmente)", R.color.md_amber_A700),
 	APROVADO(6,"Aprovado", R.color.md_amber_500),
 	EM_EXECUCAO(7,"Em execução", R.color.md_green_500),
 	FINALIZADO_RENOVADO(8,"Finalizado (Renovado)", R.color.md_indigo_400),

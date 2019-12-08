@@ -7,10 +7,10 @@ import java.io.Serializable;
 public class Vaga implements Serializable {
 
     @SerializedName(value="Numero")
-    public Integer numero;
+    private Integer numero;
 
     @SerializedName(value="Ocupada")
-    public Boolean situacao;
+    private Boolean situacao;
 
     public Vaga(Integer numero, Boolean situacao) {
         super();

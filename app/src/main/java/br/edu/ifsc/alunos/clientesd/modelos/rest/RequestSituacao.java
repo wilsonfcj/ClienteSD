@@ -15,6 +15,10 @@ public class RequestSituacao {
 		this.situacao = situacao;
 	}
 
+	public RequestSituacao(Integer ano) {
+		this.ano = ano;
+	}
+
 	public RequestSituacao() {
 	}
 

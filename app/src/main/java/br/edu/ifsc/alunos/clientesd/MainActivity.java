@@ -1,42 +1,30 @@
 package br.edu.ifsc.alunos.clientesd;
 
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.view.View;
-import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.google.android.material.snackbar.Snackbar;
 
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
 
 import br.edu.ifsc.alunos.clientesd.modelos.cardapio.Cardapio;
 import br.edu.ifsc.alunos.clientesd.modelos.estacionamento.DashboardParking;
 import br.edu.ifsc.alunos.clientesd.modelos.estacionamento.Vaga;
 import br.edu.ifsc.alunos.clientesd.modelos.projeto.DashboardProjeto;
-import br.edu.ifsc.alunos.clientesd.modelos.projeto.Projeto;
-import br.edu.ifsc.alunos.clientesd.modelos.rest.RequestSituacao;
-import br.edu.ifsc.alunos.clientesd.modelos.rest.ResponseBase;
-import br.edu.ifsc.alunos.clientesd.props.WebServiceProps;
 import br.edu.ifsc.alunos.clientesd.resources.cantina.CantinaAPI;
-import br.edu.ifsc.alunos.clientesd.resources.estacionamento.EstacionamentoAPI;
-import br.edu.ifsc.alunos.clientesd.resources.generics.RetrofitImpl;
-import br.edu.ifsc.alunos.clientesd.resources.projetos.ProjetosAPI;
+import br.edu.ifsc.alunos.clientesd.resources.cantina.ModuloConsultarPrato;
+import br.edu.ifsc.alunos.clientesd.resources.estacionamento.ModuloDashboardVagas;
+import br.edu.ifsc.alunos.clientesd.resources.projetos.ModuloDashboardProjeto;
+import br.edu.ifsc.alunos.clientesd.ui.estacionamento.VagasActivity;
 import br.edu.ifsc.alunos.clientesd.ui.projetos.ProjetosActivity;
 import br.edu.ifsc.alunos.clientesd.utilidades.BaseActivty;
 import br.edu.ifsc.alunos.clientesd.utilidades.ConnectionUtil;
-import retrofit2.Call;
-import retrofit2.Response;
-import retrofit2.Retrofit;
+import br.edu.ifsc.alunos.clientesd.utilidades.DateUtil;
 
 public class MainActivity extends BaseActivty {
 
@@ -45,13 +33,20 @@ public class MainActivity extends BaseActivty {
     private RelativeLayout relativeLayoutProjetoII;
     private TextView textViewProjetoI;
     private SwipeRefreshLayout swipeRefreshLayout;
+    private ModuloDashboardProjeto moduloDashboardProjeto;
 
 //    Estacionamento
     private RelativeLayout relativeLayoutEstacionamentoI;
     private RelativeLayout relativeLayoutEstacionamentoII;
-
+    private ModuloDashboardVagas moduloDashboardEstacionamento;
     private TextView textViewEstacionamentoI;
     private TextView textViewEstacionamentoII;
+
+//    Cantina
+    private TextView textCantinaII;
+    private TextView textCantinaI;
+    ModuloConsultarPrato moduloConsultarPrato;
+
 
     private int contResponse = 0;
 
@@ -62,15 +57,20 @@ public class MainActivity extends BaseActivty {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         setTitleToolbar("Dashboard");
-        swipeRefreshLayout.setRefreshing(true);
-        consultWS();
     }
 
     @Override
     public void mapComponents() {
         super.mapComponents();
         mapComponentsProjeto();
+        mapComponentsCantina();
         mapComponentsEstacionamento();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        consultWS();
     }
 
     @Override
@@ -94,11 +94,18 @@ public class MainActivity extends BaseActivty {
         relativeLayoutEstacionamentoI.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent lIntent = new Intent(MainActivity.this, ProjetosActivity.class);
-                Bundle lBundle = new Bundle();
-                lBundle.putParcelableArrayList("vagas", (ArrayList<? extends Parcelable>) vagas);
-                lIntent.putExtras(lBundle);
-                startActivity(lIntent);
+                startActivity(new Intent(MainActivity.this, VagasActivity.class));
+            }
+        });
+
+        relativeLayoutEstacionamentoII.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Bundle bundle = new Bundle();
+                bundle.putBoolean("livres", true);
+                Intent intent = new Intent(MainActivity.this, VagasActivity.class);
+                intent.putExtras(bundle);
+                startActivity(intent);
             }
         });
 
@@ -108,18 +115,67 @@ public class MainActivity extends BaseActivty {
                 consultWS();
             }
         });
+    }
 
+    @Override
+    public void createRestListener() {
+        moduloDashboardProjeto = new ModuloDashboardProjeto(new ModuloDashboardProjeto.ListenerDashboard() {
+            @Override
+            public void success(DashboardProjeto objeto) {
+                addResponse();
+                displayInfoProjeto(objeto);
+                hideProgess();
+            }
 
+            @Override
+            public void error(String msmErro) {
+                addResponse();
+                hideProgess();
+            }
+        });
+
+        moduloConsultarPrato = new ModuloConsultarPrato(new ModuloConsultarPrato.ListenerCardapio() {
+            @Override
+            public void success(Cardapio objeto) {
+                addResponse();
+                displayInfoCantina(objeto);
+                hideProgess();
+            }
+
+            @Override
+            public void error(String msmErro) {
+                addResponse();
+                textCantinaI.setText("Total: " + 0);
+                hideProgess();
+            }
+        });
+
+        moduloDashboardEstacionamento = new ModuloDashboardVagas(new ModuloDashboardVagas.ListenerDashboard() {
+            @Override
+            public void success(DashboardParking objeto) {
+                addResponse();
+                displayInfoEstacionamento(objeto);
+                hideProgess();
+            }
+
+            @Override
+            public void error(String msmErro) {
+                addResponse();
+                hideProgess();
+            }
+        });
     }
 
     private void consultWS() {
         if(ConnectionUtil.isNetworkAvailable(MainActivity.this)) {
-            new AsynTaskDashBoard().execute();
-            new AsynTaskDashBoardEntacionamento().execute();
+            swipeRefreshLayout.setRefreshing(true);
+            moduloDashboardProjeto.consultar();
+            moduloConsultarPrato.consultar(DateUtil.getCurrentDay());
+            moduloDashboardEstacionamento.consultar();
         }
     }
 
-    public void mapComponentsProjeto() {
+    private void mapComponentsProjeto() {
         relativeLayoutProjetoI = findViewById(R.id.dashboard_projetoI);
         relativeLayoutProjetoII = findViewById(R.id.dashboard_projetoII);
 
@@ -127,7 +183,7 @@ public class MainActivity extends BaseActivty {
         swipeRefreshLayout = findViewById(R.id.swipe_refresh_layout);
     }
 
-    public void mapComponentsEstacionamento() {
+    private void mapComponentsEstacionamento() {
         relativeLayoutEstacionamentoI = findViewById(R.id.dashboard_estacionamentoI);
         relativeLayoutEstacionamentoII = findViewById(R.id.dashboard_estacionamentoII);
 
@@ -135,86 +191,14 @@ public class MainActivity extends BaseActivty {
         textViewEstacionamentoII = findViewById(R.id.tv_estacionamentoII);
     }
 
-    class AsynTaskDashBoard extends AsyncTask<RequestSituacao, String , DashboardProjeto> {
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-        }
-
-        @Override
-        protected DashboardProjeto doInBackground(RequestSituacao... strings) {
-            Retrofit lRetrofit = new RetrofitImpl().buildRetrofit(WebServiceProps.URL.API_PROJETOS);
-            ProjetosAPI lApi = lRetrofit.create(ProjetosAPI.class);
-
-            try {
-                Call<ResponseBase<DashboardProjeto>> lObjectCall = lApi.consultarInfoDashboard();
-                Response<ResponseBase<DashboardProjeto>> lExecute = lObjectCall.execute();
-                if (lExecute.body().isSucesso()) {
-                   return lExecute.body().getData();
-                }
-            } catch (Exception aE) {
-                aE.printStackTrace();
-            }
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(DashboardProjeto aDashboardInfos) {
-            super.onPostExecute(aDashboardInfos);
-            addResponse();
-            if(aDashboardInfos != null) {
-                displayInfoProjeto(aDashboardInfos);
-            }
-            hideProgess();
-        }
-    }
-
-    private DashboardParking criarDashboarEstacionamento(ArrayList<Vaga> totalVagas) {
-        vagas = totalVagas;
-        Integer livre = 0;
-        for(Vaga lVaga : totalVagas) {
-            if(!lVaga.situacao)
-                livre++;
-        }
-        DashboardParking lDashboardParking = new DashboardParking(totalVagas.size(), livre);
-        return lDashboardParking;
-    }
-
-    class AsynTaskDashBoardEntacionamento extends AsyncTask<RequestSituacao, String , DashboardParking> {
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-        }
-
-        @Override
-        protected DashboardParking doInBackground(RequestSituacao... strings) {
-            Retrofit lRetrofit = new RetrofitImpl().buildRetrofit(WebServiceProps.URL.API_ESTACIONAMENTO);
-            EstacionamentoAPI lApi = lRetrofit.create(EstacionamentoAPI.class);
-            try {
-                Call<ArrayList<Vaga>> lObjectCall = lApi.consultarVagas();
-                Response<ArrayList<Vaga>> lExecute = lObjectCall.execute();
-                return criarDashboarEstacionamento(lExecute.body());
-            } catch (Exception aE) {
-                aE.printStackTrace();
-            }
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(DashboardParking aDashboardInfos) {
-            super.onPostExecute(aDashboardInfos);
-            addResponse();
-            if(aDashboardInfos != null) {
-                displayInfoEstacionamento(aDashboardInfos);
-            }
-            hideProgess();
-        }
+    private void mapComponentsCantina() {
+        textCantinaII = findViewById(R.id.tv_cantinaII);
+        textCantinaI = findViewById(R.id.tv_cantinaI);
+        textCantinaII.setText(DateUtil.getDate("dd/MM/yyyy"));
     }
 
     private void hideProgess() {
-        if(contResponse == 2) {
+        if(contResponse == 3) {
             swipeRefreshLayout.setRefreshing(false);
             contResponse = 0;
         }
@@ -228,9 +212,31 @@ public class MainActivity extends BaseActivty {
         textViewProjetoI.setText("Total: " + aDashboardInfos.getTotalProjetos());
     }
 
+    public void displayInfoCantina(Cardapio cardapio) {
+        int cont = 0;
+        if(cardapio.getPrimeiroPrato() != null || !cardapio.getPrimeiroPrato().isEmpty()) {
+            cont++;
+        }
+        if(cardapio.getSegundoPrato() != null || !cardapio.getSegundoPrato().isEmpty()) {
+            cont++;
+        }
+        if(cardapio.getTerceiroPrato() != null || !cardapio.getTerceiroPrato().isEmpty()) {
+            cont++;
+        }
+        if(cardapio.getQuartoPrato() != null || !cardapio.getQuartoPrato().isEmpty()) {
+            cont++;
+        }
+        if(cardapio.getQuintoPrato() != null || !cardapio.getQuintoPrato().isEmpty()) {
+            cont++;
+        }
+        if(cardapio.getSextoPrato() != null || !cardapio.getSextoPrato().isEmpty()) {
+            cont++;
+        }
+        textCantinaI.setText("Total: " + cont);
+    }
+
     public void displayInfoEstacionamento(DashboardParking aDashboardParking) {
         textViewEstacionamentoI.setText("Total: " + aDashboardParking.getTotalParkingSpaces());
         textViewEstacionamentoII.setText("Total: " + aDashboardParking.getFreeParkingSpace());
     }
-
 }

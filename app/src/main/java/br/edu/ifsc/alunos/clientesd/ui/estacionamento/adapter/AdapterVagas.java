@@ -27,9 +27,19 @@ public class AdapterVagas extends RecyclerView.Adapter<AdapterVagas.ViewHolderPr
     private Context mContext;
     private int lastPosition = -1;
 
+    @interface SituacaoVaga {
+        int OCUPADA = 0;
+        int LIVRE = 1;
+    }
+
     public AdapterVagas(Context aContext, List<Vaga> aListProjetos) {
         this.mContext = aContext;
         this.mListProjetos = aListProjetos;
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        return mListProjetos.get(position).getSituacao() ? SituacaoVaga.LIVRE : SituacaoVaga.OCUPADA;
     }
 
     @NonNull
@@ -37,6 +47,9 @@ public class AdapterVagas extends RecyclerView.Adapter<AdapterVagas.ViewHolderPr
     public ViewHolderProjetos onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View lView = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_vaga, parent,
                 false);
+        if(viewType == SituacaoVaga.LIVRE) {
+            lView = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_vaga_livre, parent,      false);
+        }
         ViewHolderProjetos lViewHolderProjetos = new ViewHolderProjetos(lView);
         return lViewHolderProjetos;
     }
@@ -44,18 +57,19 @@ public class AdapterVagas extends RecyclerView.Adapter<AdapterVagas.ViewHolderPr
     @Override
     public void onBindViewHolder(@NonNull ViewHolderProjetos holder, int position) {
         Vaga lVaga = mListProjetos.get(position);
-        holder.tvVaga.setText(lVaga.getNumero());
+        holder.tvVaga.setText(String.valueOf(lVaga.getNumero() + 1));
         if(lVaga.getSituacao()) {
-            showInfoStatus(holder, "Livre", R.color.md_green_500, R.drawable.ic_free_slot);
+            showInfoStatus(holder, "Livre", R.color.md_green_400, R.drawable.ic_free_slot, R.color.colorAccent);
         } else {
-            showInfoStatus(holder, "Ocupado", R.color.md_red_500, R.drawable.ic_busy_slot);
+            showInfoStatus(holder, "Ocupada", R.color.md_red_400, R.drawable.ic_busy_slot, R.color.md_white_1000);
         }
     }
 
-    private void showInfoStatus(ViewHolderProjetos holder, String text, int color, int img) {
+    private void showInfoStatus(ViewHolderProjetos holder, String text, int color, int img, int colorText) {
         holder.tvStatus.setText(text);
         holder.imageView.setImageResource(img);
         holder.linearLayoutStatus.setBackgroundColor(mContext.getResources().getColor(color));
+        holder.tvVaga.setTextColor(mContext.getResources().getColor(colorText));
     }
 
     @Override
